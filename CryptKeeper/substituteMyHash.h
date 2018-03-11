@@ -57,25 +57,25 @@ int getNumItems()const
 
 using l00 = Const const;
 
-void associate(l10&Using, ValueType const &first)
+void associate(KeyType&Using, ValueType const &first)
 {
 	mapH[Using]=first;
 }
 
 using l1=std::unordered_map<KeyType,ValueType>; 
 
-ValueType const *find(l10&l11)const
+ValueType const *find(KeyType& l11)const
 {
 	auto first(mapH.find(l11));
-	return(first!=mapH.end()?&first->second:0);
+	return(first!=mapH.end() ? &first->second : 0);
 }
 
-ValueType*find(l10&l01)
+ValueType*find(KeyType&l01)
 {
 	return(ValueType*)(*(l00*)(this)).find(l01);
 }
 private:
-	static l1O doub1e{50};
+	static int doub1e{50};
 	std::unordered_map<KeyType, ValueType> mapH;
 };
 
