@@ -3,24 +3,34 @@
 #include <vector>
 #include "MyHash.h"
 #include <fstream>
+#include <locale>         // std::locale, std::isalpha
 
 using namespace std;
 
 class WordListImpl
 {
 public:
+	WordListImpl();
     bool loadWordList(string filename);
     bool contains(string word) const;
     vector<string> findCandidates(string cipherWord, string currTranslation) const;
 
-	int hash(string word);
+	int hasher(string word); //custom pattern hash
 private:
 	MyHash<int, string> theList; //Id to string
 };
 
+WordListImpl::WordListImpl() 
+	: theList() //Use default constrcutro
+{
+	; //Do nothing
+}
+
 bool WordListImpl::loadWordList(string filename)
 {
-	//theList.reset(); //Removes all data, sets to initial hash of 100 buckets
+	theList.reset(); //Removes all data, sets to initial hash of 100 buckets
+
+	locale loc;
 
 	ifstream file("wordlist.txt");
 	string str;
@@ -30,7 +40,10 @@ bool WordListImpl::loadWordList(string filename)
 		//Check if word contains not a letter or an apostrophe
 		bool allGoodChars = true;
 		for (char c : str) {
-			if (c != ' \' ' or !isalpha(c)) {
+			if (c == '\'' ||  std::isalpha((unsigned char) c, loc) ) {
+				allGoodChars = true;
+			}
+			else {
 				allGoodChars = false;
 			}
 		}
@@ -42,52 +55,62 @@ bool WordListImpl::loadWordList(string filename)
 			//Associate a unique ID
 
 			//Associate a pattern ID 
+			int ID = hasher(str);
 
 			//For now, lets just use the pattern ID
 			//int ID = hash(str);
-			//theList.associate(ID, str);
+			theList.associate(ID, str);
 		}
+	}
 
-		if (write) {return true;}
-		else {return false;}
-		}
 	if (write) { return true; }
 	else { return false; }
 }
 
 
-int WordListImpl::hash(string word) {
+int WordListImpl::hasher(string word) {
 
-	//loop through characters of the string
-	int i = 1;
-	vector<int> ID; 
-	vector<char> check;
-	bool unique = true;
-	for (char c : word) {
-		unique = true;
-		//Check to see if the word is in the collection of used characters
-		for (int j = 0; j < check.size(); j++) {
-			if (c == check[j]) { //if current char has been used before
-				ID.push_back(j + 1); //Add non-unique number to ID
-				unique = false;
-			}
-		}
-		//else, add the new unique number to the ID and checker lists
-		if (unique) {
-			check.push_back(c);
-			ID.push_back(i);
-			i++;
-		}
+	////loop through characters of the string
+	//int i = 1;
+	//vector<int> ID; 
+	//vector<char> check;
+	//bool unique = true;
+	//for (char c : word) {
+	//	unique = true;
+	//	//Check to see if the word is in the collection of used characters
+	//	for (int j = 0; j < check.size(); j++) {
+	//		if (c == check[j]) { //if current char has been used before
+	//			ID.push_back(j + 1); //Add non-unique number to ID
+	//			unique = false;
+	//		}
+	//	}
+	//	//else, add the new unique number to the ID and checker lists
+	//	if (unique) {
+	//		check.push_back(c);
+	//		ID.push_back(i);
+	//		i++;
+	//	}
 
+	//}
+
+	//int out = 0;
+	//for (int k = ID.size()-1; k > 0 ; k--) {
+	//	out = pow(10,k)*ID[k] + out; //vector to int
+	//}
+
+	//return out; //Return pattern (not unique)
+	//********** OVER FLOW ERRORS ON LARGE WORDS
+			//64 BIT INT?
+				//SENDING 2 INTS?
+
+	int out = std::hash<std::string>()(word) ;
+
+	if (out < 0) {
+		return out * -1;
 	}
-
-	int out = 0;
-	for (int k = 0; k < i; k++) {
-		out = 10*k * ID[k]; //vector to int
+	else {
+		return out; 
 	}
-
-	return out; //Return pattern (not unique)
-
 
 
 }

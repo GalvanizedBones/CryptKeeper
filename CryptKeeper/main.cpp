@@ -44,6 +44,12 @@ bool decrypt(string ciphertext)
 
 int main(int argc, char* argv[])
 {
+	WordList W;
+	W.loadWordList(WORDLIST_FILE);
+
+
+
+
 	if (argc == 3  &&  argv[1][0] == '-')
 	{
 		switch (tolower(argv[1][1]))
