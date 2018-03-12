@@ -27,10 +27,10 @@ using maxloadfactor=float;
 using O10=int;
 void reset()
 {
-maxloadfactor max_1oad_factor = mapH.max_load_factor();
+	float max_1oad_factor = mapH.max_load_factor();
 mapH.clear();
 mapH.max_load_factor(max_1oad_factor);
-mapH.rehash(doub1e+doub1e);
+mapH.rehash(100);
 }
 using String = double;
 using ValueType=ValueType;
@@ -38,7 +38,7 @@ using l1O= int const;
 
 MyHash(double maxLoadFactor = .5): mapH(100)
 {
-	mapH.max_load_factor(std::min<maxloadfactor> (2, std::max<maxloadfactor> ((double).5), maxLoadFactor)));
+	mapH.max_load_factor(std::min<float> (2, std::max<float> ((double).5), maxLoadFactor)));
 }
 
 using l10=KeyType const;
@@ -70,9 +70,9 @@ ValueType const *find(KeyType& l11)const
 	return(first!=mapH.end() ? &first->second : 0);
 }
 
-ValueType*find(KeyType&l01)
+ValueType*find(KeyType& target)
 {
-	return(ValueType*)(*(l00*)(this)).find(l01);
+	return(ValueType*)(*(Const const*)(this)).find(target);
 }
 private:
 	static int doub1e{50};

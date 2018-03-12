@@ -5,6 +5,7 @@
 //Templated functions must remain in the header file
 
 #include <string>
+#include <vector>
 
 
 template<typename KeyType, typename ValueType>
@@ -12,6 +13,7 @@ class MyHash
 {
 public:
     MyHash(double maxLoadFactor = 0.5);
+	MyHash(double maxLoadFactor, int size);
     ~MyHash();
     void reset();
     void associate(const KeyType& key, const ValueType& value);
@@ -39,20 +41,20 @@ private:
 		Node* next;
 	};
 
-	double m_maxLF; //The speed/size performance of the hash
+	double m_maxLF; //The speed/size performance of the hash in %
 	double m_currLF; 
-	double m_size; //Number of buckets in the hash, default to 100 on construction
-	double m_totElements;
-	Node* m_hashTable; //Dynamically sized array
+	int m_size; //Number of buckets in the hash, default to 100 on construction
+	int m_totElements;
+	std::vector<Node*> m_hashTable; //Dynamically sized array
 };
 
 template<typename KeyType, typename ValueType>
 inline
-MyHash<KeyType, ValueType>::MyHash(double maxLoadFactor = .5)
+MyHash<KeyType, ValueType>::MyHash(double maxLoadFactor)
 	: m_maxLF(maxLoadFactor),
 	m_currLF(0), //no initial filled buckets
-	m_size(100), //start at 100 buckets
-	m_totElements(0)
+	m_size(100), //start at 100 buckets max
+	m_totElements(0) //start with 0 filled buckets ->currLF =0
 {
 	if (maxLoadFactor <= 0) {
 		m_maxLF = .5;
@@ -61,13 +63,24 @@ MyHash<KeyType, ValueType>::MyHash(double maxLoadFactor = .5)
 		m_maxLF = 2.0;
 	}
 	
-	m_hashTable = new Node*[m_size];
+	m_hashTable[0] = new Node[m_size];
 	
 	//Initialize hash table to be empty buckets
 	for (int i = 0; i < m_size; i++) { //O(B)
 	m_hashTable[i] = nullptr;
 	}	
 }
+
+
+template<typename KeyType, typename ValueType>
+inline
+MyHash<KeyType, ValueType>::MyHash(double maxLoadFactor, int size) //Check out this fancy C+11 Syntax
+	: MyHash(maxLoadFactor) //Delegate constructor!
+{
+	m_size = size; //overwrite the default
+					//Smells like clean code bby
+}
+
 
 template<typename KeyType, typename ValueType>
 inline
@@ -80,7 +93,7 @@ MyHash<KeyType, ValueType>::~MyHash() {
 		while (del != nullptr) { //If theres any memory in this bucket, delete it
 			delHelper = del;
 			if (del->next != nullptr) { //Advance to next node in open list 
-				del = del->next
+				del = del->next;
 			}
 			delete delHelper; //Always delete existing node
 		}
@@ -119,6 +132,53 @@ void MyHash<KeyType, ValueType>::associate(const KeyType& key, const ValueType& 
 				// p.associate(this.Node[i]); //Need to dynamically rehash all terms
 			//swap(this, p)
 			//delete p; //MUST DELETE CONTENTS OF OLD ARRAY
+
+	int index = key % m_size;
+
+	Node* look = m_hashTable[index];
+
+	int i = 0; //Depth of bucket, used to check if new bucket made
+
+
+	if (look != nullptr) { //Goal to stop before nullptr
+		while (look->next != nullptr) {//Loop through bucket chain 
+
+			if (value == look->m_val) {//Key already exists
+				look->m_val = value; //update and return
+				return; //Dont increase size of list
+			}
+			look = look->next;
+			i++; //Deeper into bucket
+		}
+	}
+
+	//Now before an empty space in bucket, with unique key
+	Node* add = new Node;
+	add->m_key = key;
+	add->m_val = value;
+	add->next = nullptr;
+
+	look->next = add; //Add to list
+	m_totElements++; //Increase size of elements
+
+	//Update load factor
+	m_currLF = m_totElements / m_size;
+
+
+	if (m_currLF > m_maxLF ) {
+		//Need to create bigger array 2x the size
+			//Hashing is unique to MyHash Objects (not a vector prop)
+				//Need a a new MyHash
+				
+		//Re hash all data to new hashTable
+		//delete all current data
+		//swap tables
+		int newSize = m_size * 2;
+		MyHash* newHash = new MyHash(m_maxLF, newSize); //keep user input, but update size
+
+
+	}
+
 
 }
 
