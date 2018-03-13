@@ -1,24 +1,78 @@
 #include "provided.h"
 #include <string>
 #include <vector>
+
 using namespace std;
 
 class DecrypterImpl
 {
 public:
-    bool load(string filename);
-    vector<string> crack(const string& ciphertext);
+	bool load(string filename);
+	vector<string> crack(const string& ciphertext);
 private:
+	WordList * m_list;
+	vector<Tokenizer*> m_tables; 
+
 };
 
 bool DecrypterImpl::load(string filename)
 {
-    return false;  // This compiles, but may not be correct
+	bool p = true;
+	WordList* newList = new WordList();
+	p = newList->loadWordList(filename);
+
+	WordList * temp = m_list;
+	m_list = newList;
+	delete temp;
+    
+	return p;  
 }
 
 vector<string> DecrypterImpl::crack(const string& ciphertext)
 {
-    return vector<string>();  // This compiles, but may not be correct
+	vector<string> tokens;
+
+	Tokenizer t(",;:.!()[]{}-\"#$%^&");
+
+	//#1) Get Cipher Tokens
+	tokens = t.tokenize(ciphertext);
+
+	//#2) Find Cipher Pattern
+	int pattern = 1;
+
+	//#3) Find all Hash Matches
+	//vector<string> hashMatches = t.tokenize(m_list->findCandidates(pattern));
+
+
+	//#4 Generate initial translator tables 
+	bool valid = true;
+	int i = 0;
+	for (i = 0; i < tokens.size(); i++) {
+		valid = true;
+		Translator* genTable = new Translator;
+		//valid = genTable->pushMapping(tokens[i],hashMatches[j] )
+		if (!valid) {
+			continue; //Dont add non-valid translator to validOut 
+		}
+		//m_tables.push_back(genTable);
+
+	}
+
+
+	vector<Translator> validTrans;
+	vector<string> out;
+	//string curTrans = "";
+	//while (!validTrans.empty())
+	//{
+	//	curTrans = validTrans.back();
+	//	out.push_back(curTrans);
+	//	validTrans.pop_back();
+	//}
+
+	return out;
+
+
+
 }
 
 //******************** Decrypter functions ************************************

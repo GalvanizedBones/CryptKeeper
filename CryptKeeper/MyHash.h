@@ -13,6 +13,7 @@ class MyHash
 {
 public:
     MyHash(double maxLoadFactor = 0.5, int size =100 );
+	MyHash(bool append);
 	//MyHash(double maxLoadFactor;
     ~MyHash();
     void reset();
@@ -47,6 +48,7 @@ private:
 	int m_size; //Number of buckets in the hash, default to 100 on construction
 	int m_totElements;
 	//vector<Node*> m_hashTable; 
+	bool m_append; 
 	Node* * m_hashTable; //Dynamic Array of Node pointers
 
 
@@ -63,8 +65,10 @@ MyHash<KeyType, ValueType>::MyHash(double maxLoadFactor ,int size)
 	: m_maxLF(maxLoadFactor),
 	m_currLF(0), //no initial filled buckets
 	m_size(size), //start at 100 buckets max
-	m_totElements(0) //start with 0 filled buckets ->currLF =0
-{
+	m_totElements(0), //start with 0 filled buckets ->currLF =0
+	m_append(false) //Default to overwrite collisions
+{	
+
 	if (maxLoadFactor <= 0) {
 		m_maxLF = .5;
 	}
@@ -78,6 +82,14 @@ MyHash<KeyType, ValueType>::MyHash(double maxLoadFactor ,int size)
 	for (int i = 0; i < m_size; i++) { //O(B)
 	m_hashTable[i] = nullptr;
 	}	
+}
+
+template<typename KeyType, typename ValueType>
+inline
+MyHash<KeyType, ValueType>::MyHash(bool append)
+	:MyHash() //Delegate constructor!
+{
+	m_append = false; 
 }
 
 
@@ -208,7 +220,15 @@ void MyHash<KeyType, ValueType>::associate(const KeyType& key, const ValueType& 
 		while (look->next != nullptr) {//Loop through bucket chain 
 
 			if (value == look->m_val) {//Key already exists
-				look->m_val = value; //update and return
+
+				//update and return
+				if (m_append){
+					look->m_val = look->m_val + " " + value; //update key by appending
+					}
+				else {
+					look->m_val = value; //overwrite
+				}
+
 				return; //Dont increase size of list
 			}
 			look = look->next;
@@ -356,7 +376,9 @@ const ValueType* MyHash<KeyType, ValueType>::find(const KeyType& key) const {
 			//If increment to nullptr, return nullptr
 
 	//Using stl hash temporarily
+	int index = key % m_size;
 
-
+	Node* look = m_hashTable[index];
+	return (const ValueType*) look->m_val; 
 
 }

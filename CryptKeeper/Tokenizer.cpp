@@ -15,7 +15,7 @@ private:
 
 };
 
-TokenizerImpl::TokenizerImpl(string separators)
+TokenizerImpl::TokenizerImpl(string separators= ",;:.!()[]{}-\"#$%^&")
 {//Construct tokenizer
 
 //Create separator vector 

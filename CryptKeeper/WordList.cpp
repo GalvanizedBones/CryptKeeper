@@ -15,13 +15,16 @@ public:
     bool contains(string word) const;
     vector<string> findCandidates(string cipherWord, string currTranslation) const;
 
-	int hasher(string word); //custom pattern hash
+	int hasher(string word);  //stl hash
+	unsigned long long int patternhasher(string word); //custom pattern hash
 private:
 	MyHash<int, string> theList; //Id to string
+	MyHash<unsigned long long int, string> patternList;
 };
 
-WordListImpl::WordListImpl() 
-	: theList() //Use default constrcutro
+WordListImpl::WordListImpl()
+	: theList(), //Use default constrcutro
+	patternList(true)
 {
 	; //Do nothing
 }
@@ -53,13 +56,13 @@ bool WordListImpl::loadWordList(string filename)
 
 			//We currently have a string
 			//Associate a unique ID
-
-			//Associate a pattern ID 
 			int ID = hasher(str);
+			//Associate a pattern ID 
+			unsigned long long int patternID = patternhasher(str);
 
-			//For now, lets just use the pattern ID
-			//int ID = hash(str);
+			//Update lists
 			theList.associate(ID, str);
+			patternList.associate(patternID, str);
 		}
 	}
 
@@ -68,40 +71,49 @@ bool WordListImpl::loadWordList(string filename)
 }
 
 
-int WordListImpl::hasher(string word) {
 
-	////loop through characters of the string
-	//int i = 1;
-	//vector<int> ID; 
-	//vector<char> check;
-	//bool unique = true;
-	//for (char c : word) {
-	//	unique = true;
-	//	//Check to see if the word is in the collection of used characters
-	//	for (int j = 0; j < check.size(); j++) {
-	//		if (c == check[j]) { //if current char has been used before
-	//			ID.push_back(j + 1); //Add non-unique number to ID
-	//			unique = false;
-	//		}
-	//	}
-	//	//else, add the new unique number to the ID and checker lists
-	//	if (unique) {
-	//		check.push_back(c);
-	//		ID.push_back(i);
-	//		i++;
-	//	}
+unsigned long long int WordListImpl::patternhasher(string word) {
+	//loop through characters of the string
 
-	//}
+	int i = 1;
+	vector<int> id; 
+	vector<char> check;
+	bool unique = true;
+	for (char c : word) {
+		unique = true;
+		//check to see if the word is in the collection of used characters
+		for (unsigned int j = 0; j < check.size(); j++) {
+			if (c == check[j]) { //if current char has been used before
+				id.push_back(j + 1); //add non-unique number to id
+				unique = false;
+			}
+		}
+		//else, add the new unique number to the id and checker lists
+		if (unique) {
+			check.push_back(c);
+			id.push_back(i);
+			i++;
+		}
 
-	//int out = 0;
-	//for (int k = ID.size()-1; k > 0 ; k--) {
-	//	out = pow(10,k)*ID[k] + out; //vector to int
-	//}
+	}
 
-	//return out; //Return pattern (not unique)
+	unsigned long long int out = 0;
+	for (int k = 0; k < id.size() ; k++) {
+		out = (unsigned long long int)(pow(10,id.size()-1 - k)*id[k] + out); //vector to int
+	}
+
+	if (out < 0) {
+		return out * -1;
+	}
+	else {
+		return out;
+	}
+	//return pattern (not unique)
 	//********** OVER FLOW ERRORS ON LARGE WORDS
-			//64 BIT INT?
-				//SENDING 2 INTS?
+	//64 BIT INT?
+}
+
+int WordListImpl::hasher(string word) {
 
 	int out = std::hash<std::string>()(word) ;
 
