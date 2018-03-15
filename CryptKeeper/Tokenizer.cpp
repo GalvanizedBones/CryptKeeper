@@ -15,6 +15,8 @@ private:
 
 };
 
+
+
 TokenizerImpl::TokenizerImpl(string separators= ",;:.!()[]{}-\"#$%^&")
 {//Construct tokenizer
 

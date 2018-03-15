@@ -19,12 +19,12 @@ public:
 	unsigned long long int patternhasher(string word); //custom pattern hash
 private:
 	MyHash<int, string> theList; //Id to string
-	MyHash<unsigned long long int, string> patternList;
+	MyHash<unsigned long long int, vector<string> * > patternList;
 };
 
 WordListImpl::WordListImpl()
 	: theList(), //Use default constrcutro
-	patternList(true)
+	patternList()
 {
 	; //Do nothing
 }
@@ -35,7 +35,7 @@ bool WordListImpl::loadWordList(string filename)
 
 	locale loc;
 
-	ifstream file("wordlist.txt");
+	ifstream file(filename);
 	string str;
 	bool write = false;
 	while (getline(file, str))
@@ -62,7 +62,18 @@ bool WordListImpl::loadWordList(string filename)
 
 			//Update lists
 			theList.associate(ID, str);
-			patternList.associate(patternID, str);
+			
+			vector<string>  *  patternWords =(vector<string> *) patternList.find(patternID);
+
+			if (patternWords != nullptr) { //If a pattern vector already exists, add to it
+				(patternWords)->push_back(str);
+			}
+			else { //Else, make a new pattern vector from scratch
+				vector<string>* newBucket = new vector<string>;
+				newBucket->push_back(str);
+				patternList.associate(patternID, newBucket);
+			}
+			//patternList.associate(patternID, str);
 		}
 	}
 

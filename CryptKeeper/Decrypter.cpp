@@ -13,6 +13,8 @@ private:
 	WordList * m_list;
 	vector<Tokenizer*> m_tables; 
 
+	unsigned long long int patternize(string word);
+
 };
 
 bool DecrypterImpl::load(string filename)
@@ -37,9 +39,19 @@ vector<string> DecrypterImpl::crack(const string& ciphertext)
 	//#1) Get Cipher Tokens
 	tokens = t.tokenize(ciphertext);
 
-	//#2) Find Cipher Pattern
-	int pattern = 1;
+	//For each token
+	for (int i = 0; i < tokens.size(); i++) {
+		//#2) Find Cipher Pattern
+		unsigned long long int pattern = patternize(tokens[i]);
 
+		//#3 Get vector of potential words
+		string curTrans = EMPTY, BUT SIZE OF TOKEN[i]
+			//Just initializing first tranlsator now
+		vector<string> potenWord = m_list->findCandidates(tokens[i], )
+
+
+	}
+		
 	//#3) Find all Hash Matches
 	//vector<string> hashMatches = t.tokenize(m_list->findCandidates(pattern));
 
@@ -72,6 +84,46 @@ vector<string> DecrypterImpl::crack(const string& ciphertext)
 	return out;
 
 
+
+}
+
+
+
+unsigned long long int DecrypterImpl::patternize(string word) {
+
+	int i = 1;
+	vector<int> id;
+	vector<char> check;
+	bool unique = true;
+	for (char c : word) {
+		unique = true;
+		//check to see if the word is in the collection of used characters
+		for (unsigned int j = 0; j < check.size(); j++) {
+			if (c == check[j]) { //if current char has been used before
+				id.push_back(j + 1); //add non-unique number to id
+				unique = false;
+			}
+		}
+		//else, add the new unique number to the id and checker lists
+		if (unique) {
+			check.push_back(c);
+			id.push_back(i);
+			i++;
+		}
+
+	}
+
+	unsigned long long int out = 0;
+	for (int k = 0; k < id.size(); k++) {
+		out = (unsigned long long int)(pow(10, id.size() - 1 - k)*id[k] + out); //vector to int
+	}
+
+	if (out < 0) {
+		return out * -1;
+	}
+	else {
+		return out;
+	}
 
 }
 

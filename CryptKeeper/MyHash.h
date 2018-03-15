@@ -13,7 +13,6 @@ class MyHash
 {
 public:
     MyHash(double maxLoadFactor = 0.5, int size =100 );
-	MyHash(bool append);
 	//MyHash(double maxLoadFactor;
     ~MyHash();
     void reset();
@@ -48,7 +47,6 @@ private:
 	int m_size; //Number of buckets in the hash, default to 100 on construction
 	int m_totElements;
 	//vector<Node*> m_hashTable; 
-	bool m_append; 
 	Node* * m_hashTable; //Dynamic Array of Node pointers
 
 
@@ -65,8 +63,8 @@ MyHash<KeyType, ValueType>::MyHash(double maxLoadFactor ,int size)
 	: m_maxLF(maxLoadFactor),
 	m_currLF(0), //no initial filled buckets
 	m_size(size), //start at 100 buckets max
-	m_totElements(0), //start with 0 filled buckets ->currLF =0
-	m_append(false) //Default to overwrite collisions
+	m_totElements(0) //start with 0 filled buckets ->currLF =0
+	
 {	
 
 	if (maxLoadFactor <= 0) {
@@ -84,13 +82,7 @@ MyHash<KeyType, ValueType>::MyHash(double maxLoadFactor ,int size)
 	}	
 }
 
-template<typename KeyType, typename ValueType>
-inline
-MyHash<KeyType, ValueType>::MyHash(bool append)
-	:MyHash() //Delegate constructor!
-{
-	m_append = false; 
-}
+
 
 
 //template<typename KeyType, typename ValueType>
@@ -222,12 +214,9 @@ void MyHash<KeyType, ValueType>::associate(const KeyType& key, const ValueType& 
 			if (value == look->m_val) {//Key already exists
 
 				//update and return
-				if (m_append){
-					look->m_val = look->m_val + " " + value; //update key by appending
-					}
-				else {
+
 					look->m_val = value; //overwrite
-				}
+				
 
 				return; //Dont increase size of list
 			}
@@ -375,10 +364,23 @@ const ValueType* MyHash<KeyType, ValueType>::find(const KeyType& key) const {
 				//Return the value of the found key
 			//If increment to nullptr, return nullptr
 
-	//Using stl hash temporarily
+	
 	int index = key % m_size;
 
-	Node* look = m_hashTable[index];
-	return (const ValueType*) look->m_val; 
+	Node* look = m_hashTable[index];//Find 1st bucket in hash index
+	if (look == nullptr) {
+		return nullptr; //Empty bucket entirely, add to it
+	}
+
+	while (look != nullptr) {
+		if (key == look->m_key) {
+			return (ValueType*)look->m_val; //Found vector to append to
+		}
+		look = look->next;
+	}
+
+	//Found empty spot to add to
+
+	return nullptr;
 
 }
