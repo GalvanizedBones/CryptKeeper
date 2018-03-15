@@ -42,12 +42,19 @@ vector<string> DecrypterImpl::crack(const string& ciphertext)
 	//For each token
 	for (int i = 0; i < tokens.size(); i++) {
 		//#2) Find Cipher Pattern
-		unsigned long long int pattern = patternize(tokens[i]);
+		
+		//unsigned long long int pattern = patternize(tokens[i]);
+			//Give to word list to do 
 
 		//#3 Get vector of potential words
-		string curTrans = EMPTY, BUT SIZE OF TOKEN[i]
+		string curTrans = ""; // EMPTY, BUT SIZE OF TOKEN[i]
+			for (char c : tokens[i]) {
+				curTrans += "?";
+			}
+
 			//Just initializing first tranlsator now
-		vector<string> potenWord = m_list->findCandidates(tokens[i], )
+			vector<string> potenWord = m_list->findCandidates(tokens[i], curTrans);
+
 
 
 	}

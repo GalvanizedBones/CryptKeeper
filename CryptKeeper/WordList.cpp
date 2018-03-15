@@ -15,11 +15,13 @@ public:
     bool contains(string word) const;
     vector<string> findCandidates(string cipherWord, string currTranslation) const;
 
-	int hasher(string word);  //stl hash
-	unsigned long long int patternhasher(string word); //custom pattern hash
+
 private:
 	MyHash<int, string> theList; //Id to string
-	MyHash<unsigned long long int, vector<string> * > patternList;
+	MyHash<unsigned long long int, vector<string>  > patternList;
+
+	int  hasher(string word) const;  //stl hash
+	unsigned long long int patternhasher(string word) const; //custom pattern hash
 };
 
 WordListImpl::WordListImpl()
@@ -63,7 +65,7 @@ bool WordListImpl::loadWordList(string filename)
 			//Update lists
 			theList.associate(ID, str);
 			
-			vector<string>  *  patternWords =(vector<string> *) patternList.find(patternID);
+			vector<string> *  patternWords =(vector<string> *) patternList.find(patternID);
 
 			if (patternWords != nullptr) { //If a pattern vector already exists, add to it
 				(patternWords)->push_back(str);
@@ -71,7 +73,7 @@ bool WordListImpl::loadWordList(string filename)
 			else { //Else, make a new pattern vector from scratch
 				vector<string>* newBucket = new vector<string>;
 				newBucket->push_back(str);
-				patternList.associate(patternID, newBucket);
+				patternList.associate(patternID, *newBucket);
 			}
 			//patternList.associate(patternID, str);
 		}
@@ -83,7 +85,7 @@ bool WordListImpl::loadWordList(string filename)
 
 
 
-unsigned long long int WordListImpl::patternhasher(string word) {
+unsigned long long int WordListImpl::patternhasher(string word) const {
 	//loop through characters of the string
 
 	int i = 1;
@@ -124,7 +126,7 @@ unsigned long long int WordListImpl::patternhasher(string word) {
 	//64 BIT INT?
 }
 
-int WordListImpl::hasher(string word) {
+int WordListImpl::hasher(string word) const {
 
 	int out = std::hash<std::string>()(word) ;
 
@@ -140,11 +142,43 @@ int WordListImpl::hasher(string word) {
 
 bool WordListImpl::contains(string word) const
 {
-    return false; // This compiles, but may not be correct
+	//Check with theList, opposed to patternList for better speed
+
+	int key = hasher(word); //stl hash should have unique keys
+	const string * pt =  theList.find(key);
+
+	if (pt == nullptr) {
+		return false; //Key not found
+	}
+	else {
+		return true;
+	}
 }
 
 vector<string> WordListImpl::findCandidates(string cipherWord, string currTranslation) const
 {
+	vector<string> out; 
+
+//#1 patternize the cipherWord
+	unsigned long long int patternID = patternhasher(cipherWord);
+
+//#2 find the corresponding vector for the pattern 
+	vector<string> * samePatternWords = (vector<string> *) patternList.find(patternID);
+
+	for (int i = 0; i < samePatternWords->size(); i++) {
+		//For all possible translations	
+			//Make translations!
+				//pushMap returns a true/false
+					//Push the current cipher with the matchingWordPattern[i]
+						//If true, add samePatternWord to out vector
+
+
+
+	}
+
+
+
+
     return vector<string>();  // This compiles, but may not be correct
 }
 

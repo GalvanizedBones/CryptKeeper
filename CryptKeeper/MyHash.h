@@ -211,7 +211,7 @@ void MyHash<KeyType, ValueType>::associate(const KeyType& key, const ValueType& 
 	if (look != nullptr) { //Goal to stop before nullptr
 		while (look->next != nullptr) {//Loop through bucket chain 
 
-			if (value == look->m_val) {//Key already exists
+			if (key == look->m_key) {//Key already exists
 
 				//update and return
 
@@ -374,7 +374,7 @@ const ValueType* MyHash<KeyType, ValueType>::find(const KeyType& key) const {
 
 	while (look != nullptr) {
 		if (key == look->m_key) {
-			return (ValueType*)look->m_val; //Found vector to append to
+			return (&look->m_val); //Found vector to append to
 		}
 		look = look->next;
 	}
