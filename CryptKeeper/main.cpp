@@ -9,7 +9,7 @@
 #include <numeric>
 using namespace std;
 
-const string WORDLIST_FILE = "wordlist1.txt";
+const string WORDLIST_FILE = "wordlist.txt";
 
 string encrypt(string plaintext)
 {
@@ -44,8 +44,9 @@ bool decrypt(string ciphertext)
 
 int main(int argc, char* argv[])
 {
-	WordList W;
-	W.loadWordList(WORDLIST_FILE);
+	Decrypter D;
+	D.load(WORDLIST_FILE);
+	vector<string> test = D.crack("xyqbbq.lol^kkko");
 
 
 

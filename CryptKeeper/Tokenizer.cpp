@@ -23,7 +23,7 @@ TokenizerImpl::TokenizerImpl(string separators= ",;:.!()[]{}-\"#$%^&")
 //Create separator vector 
 	int i = 0;
 	for (char c : separators) { //O(P)
-		if (!c == '\'') //"Apostrophes must not be used as a separator when tokenizing" 
+		if (c != '\'') //"Apostrophes must not be used as a separator when tokenizing" 
 		{
 			m_delims.push_back(c); //All characters input are a separator
 			i++;
@@ -38,16 +38,25 @@ vector<string> TokenizerImpl::tokenize(const std::string& s) const
 	vector<string> tokens;
 	string currWord="";
 
+	bool cut = false;
 	for(char c: s){//Loop through string
 		for (int i = 0; i < m_size; i++) { //Check with all delimeters
 			if (c == m_delims[i]) { //O(SP)
 				//End of token, add to vector
 				tokens.push_back(currWord);
+				//c++;
 				currWord = "";
+				cut = true;
 			}
 		}
-		currWord += c; //Keep adding letters to the token were building
+		if (!cut) { //Cut out delimeters
+			currWord += c; //Keep adding letters to the token were building
+		}
+		else {
+			cut = false;//wait a turn after cutting to add letters
+		}
 	}
+	tokens.push_back(currWord);
     return tokens;  
 }
 

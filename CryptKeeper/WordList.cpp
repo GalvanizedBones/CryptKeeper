@@ -167,7 +167,7 @@ vector<string> WordListImpl::findCandidates(string cipherWord, string currTransl
 
 	for (int i = 0; i < samePatternWords->size(); i++) {
 		//For all possible translations	
-			//Make translations!
+			//Make translations! **Consistent with curr Translation
 				//pushMap returns a true/false
 					//Push the current cipher with the matchingWordPattern[i]
 						//If true, add samePatternWord to out vector

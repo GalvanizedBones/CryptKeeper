@@ -13,7 +13,7 @@ private:
 	WordList * m_list;
 	vector<Tokenizer*> m_tables; 
 
-	unsigned long long int patternize(string word);
+	//unsigned long long int patternize(string word);
 
 };
 
@@ -96,43 +96,43 @@ vector<string> DecrypterImpl::crack(const string& ciphertext)
 
 
 
-unsigned long long int DecrypterImpl::patternize(string word) {
-
-	int i = 1;
-	vector<int> id;
-	vector<char> check;
-	bool unique = true;
-	for (char c : word) {
-		unique = true;
-		//check to see if the word is in the collection of used characters
-		for (unsigned int j = 0; j < check.size(); j++) {
-			if (c == check[j]) { //if current char has been used before
-				id.push_back(j + 1); //add non-unique number to id
-				unique = false;
-			}
-		}
-		//else, add the new unique number to the id and checker lists
-		if (unique) {
-			check.push_back(c);
-			id.push_back(i);
-			i++;
-		}
-
-	}
-
-	unsigned long long int out = 0;
-	for (int k = 0; k < id.size(); k++) {
-		out = (unsigned long long int)(pow(10, id.size() - 1 - k)*id[k] + out); //vector to int
-	}
-
-	if (out < 0) {
-		return out * -1;
-	}
-	else {
-		return out;
-	}
-
-}
+//unsigned long long int DecrypterImpl::patternize(string word) {
+//
+//	int i = 1;
+//	vector<int> id;
+//	vector<char> check;
+//	bool unique = true;
+//	for (char c : word) {
+//		unique = true;
+//		//check to see if the word is in the collection of used characters
+//		for (unsigned int j = 0; j < check.size(); j++) {
+//			if (c == check[j]) { //if current char has been used before
+//				id.push_back(j + 1); //add non-unique number to id
+//				unique = false;
+//			}
+//		}
+//		//else, add the new unique number to the id and checker lists
+//		if (unique) {
+//			check.push_back(c);
+//			id.push_back(i);
+//			i++;
+//		}
+//
+//	}
+//
+//	unsigned long long int out = 0;
+//	for (int k = 0; k < id.size(); k++) {
+//		out = (unsigned long long int)(pow(10, id.size() - 1 - k)*id[k] + out); //vector to int
+//	}
+//
+//	if (out < 0) {
+//		return out * -1;
+//	}
+//	else {
+//		return out;
+//	}
+//
+//}
 
 //******************** Decrypter functions ************************************
 
